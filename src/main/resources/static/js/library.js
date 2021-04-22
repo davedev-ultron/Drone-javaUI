@@ -376,3 +376,23 @@ const executeKeyboardCommand = function (event) {
             break;
     }
 }
+
+// called from within the maps pop up
+const removePoint = function (form) {
+    SELECTED_DRONE.removePoint(form["key"].value);
+}
+
+const updatePointValue = function (form) {
+    var pointData = SELECTED_DRONE.getPointDataForID(form["key"].value);
+    pointData.speed = form["speed"].value;
+    pointData.height = form["height"].value;
+    pointData.action = form["action"].value;
+}
+
+const copyToClipboard = function (elmId) {
+    var copyLink = document.getElementById(elmId);
+    copyLink.select();
+    copyLink.setSelectionRange(0, 99999);
+
+    document.execCommand("copy");
+}
