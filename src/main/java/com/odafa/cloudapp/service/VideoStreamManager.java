@@ -31,25 +31,35 @@ public class VideoStreamManager implements Runnable {
 	private final Map<String, Set<WebSocketSession>> droneIdToWebSocketSession;
 
     private final DatagramSocket videoReceiverDatagramSocket;
+	// executor has thread pool because we need 1 thread that is consistently running listening and dispatching new data
+	// you never want to start a thread yourself, you want to use executor to manage
 	private final ExecutorService serverRunner;
 
+	// this executes automatically upon start of spring app
     public VideoStreamManager(ConfigReader configuration) {
+		// create datagram socket to listen on certain port
 		try {
 			videoReceiverDatagramSocket = new DatagramSocket(configuration.getVideoServerPort());
 		} catch (IOException e) {
             log.error(e.getMessage(), e);
+			// blow up application if cannot open video feed
 			throw new RuntimeException(e);
 		}
 
+		// if everything is successful we will create our executor
 		serverRunner = Executors.newSingleThreadExecutor();
+		// we have a drone id to session relationship, since we want to do it in a thread safe manner
+		// we will use concurrent hash map
 		droneIdToWebSocketSession = new ConcurrentHashMap<>();
         
         ID_LENGTH = configuration.getDroneIdLength();
 
+		// we can start listening
         activate();
     }
 
 	public void activate() {
+		// since this class implements Runnable - this will execute the run() below
 		serverRunner.execute(this);
         log.info("Video Stream Manager is Active");
 	}
