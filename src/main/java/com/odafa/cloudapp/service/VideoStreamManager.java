@@ -22,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Component
 public class VideoStreamManager implements Runnable {
+	//max udp packet size
     private static final int UDP_MAX_SIZE = 65507;
 
     private final int ID_LENGTH;
@@ -65,34 +66,54 @@ public class VideoStreamManager implements Runnable {
 	}
 
 	public void run() {
+		// continuously run until socket is closed
         while(!videoReceiverDatagramSocket.isClosed()){
+			// we are receiving udp packet with drone id and then jpg data
+			// dron id should be first 8 bytes because its only 1 char
+			// we have to retrieve drone id
             try {
+				// buffer data will be storing data from UDP packet
 				byte[] buf = new byte[UDP_MAX_SIZE];
+				// new datagram packet to store buffer
 				DatagramPacket packet = new DatagramPacket(buf, buf.length);
 				
+				// here we will actually receive data
+				// this is a blocking call and will block until we receive
 				videoReceiverDatagramSocket.receive(packet);
 
+				// extract drone id and the rest is raw jpeg data
 				String droneId = new String( packet.getData(), 0, ID_LENGTH);
 				String data = new String(packet.getData(), ID_LENGTH, packet.getLength());
                 
+				// using the droneId we will retrieve all the sessions that are currently
+				// registered to receive frames
 				Set<WebSocketSession> droneIdWebSessions = droneIdToWebSocketSession.get(droneId);
 				
+				// when there is no viewers or sessions
 				if (droneIdWebSessions == null || droneIdWebSessions.isEmpty()) {
                     continue;
 				}
-                
+
+				// if we did extract something then there is viewers
+                // we do not want to use for loop or while
+				// we may want to change the underlying collection
 				Iterator<WebSocketSession> it = droneIdWebSessions.iterator();
 				
 				while(it.hasNext()) {
+					// we extract socket session
 					WebSocketSession session = it.next();
 					if (!session.isOpen()) {
+						// remove the session to prevent memory leak
 						it.remove();
 						continue;
 					}
+					// we send message if its open
 					session.sendMessage(new TextMessage(data));
 				}
 
             } catch(Exception e) {
+				// throwing exception in here will only stop this thread and it will not
+				// affect the rest of the app so 
 				log.error(e.getMessage());
             }
         }
