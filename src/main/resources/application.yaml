@@ -1,2 +1,10 @@
 server:
   port: 80
+
+app:
+  logging-to: file
+
+logging:
+  level:
+    org.springframework: INFO
+    com.odafa.cloudapp: DEBUG
