@@ -1,3 +1,4 @@
+
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
 
@@ -5,13 +6,35 @@
 <script type="text/javascript" src="/webjars/jquery/jquery.min.js"></script>
 <script type="text/javascript" src="/webjars/bootstrap/js/bootstrap.min.js"></script>
 
+<!-- Google maps api key goes in the attribute below -->
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key="></script>
+<script type="text/javascript" src="/js/ui-components.js"></script>
+<script type="text/javascript" src="/js/library.js"></script>
+<script type="text/javascript" src="/js/app.js"></script>
+
+<link rel="stylesheet" type="text/css" href="/css/app.css" />
+
+
+<script th:inline="javascript">  
+  const PUBLIC_IP	       = [[${publicIp}]]
+  const VIDEO_ENDPOINT   = [[${videoEndpoint}]]
+  // Most likely want to setup the following 2 variables on
+  // the raspi on the drone itself and send them to front end
+  const DEFAULT_SPEED    = [[${defaultSpeed}]]
+  const DEFAULT_ALTITUDE = [[${defaultAltitude}]]
+</script> 
+
 <title>ODAFA - Operate Drones Anywhere From Anywhere</title> 
 
 </head>
 
 <body>  
 
-<h1> ODAFA is online!!! </h1>
+  <hr>
+	<div id="container" style="margin-left: 7px;">
+		<div id="map"></div>
+		<div class="dronesList"></div>
+	</div>
 
 </body>
 </html> 
