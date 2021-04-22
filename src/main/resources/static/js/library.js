@@ -45,3 +45,140 @@ class VideoStreamClient {
         }
     }
 }
+
+class Drone {
+    constructor(id, lat, lng) {
+        // can access variables from other files in js after compile WORLD_MAP
+        this.id = id;
+        this.lat = lat;
+        this.lng = lng;
+        this.videoSocket = new VideoStreamClient(id, PUBLIC_IP, 80, VIDEO_ENDPOINT);
+        this.posMark = new google.maps.Marker({
+            position: { lat: lat, lng: lng },
+            map: WORLD_MAP, 
+            label: id + '',
+            icon: 'drone.svg'
+        });
+        this.locationToPointDataMap = new Map();
+        // label counter to increase the label of the markers
+        this.labelCounter = 0;
+        this.speed = 0.0;
+        this.alt = 0.0
+    }
+
+    startMission() {
+        $.ajax({
+            // ajax call
+            type: 'POST',
+            url: '/startMission',
+            data: {
+                points: this.getPointDataJSON(),
+                droneId: this.id
+            }
+        })
+            .done(function (response) {
+                console.log(response)
+            })
+            .fail(function (data) {
+                console.log(data)
+            });
+    }
+
+    sendCommand(commandId) {
+        $.ajax({
+            type: 'POST',
+            url: '/sendCommand',
+            data: { commandCode: commandId, droneId: this.id }
+        })
+            .done(function (response) {
+                console.log(response)
+            })
+            .fail(function (data) {
+                console.log(data)
+            });
+    }
+
+    startVideoFeed() {
+        // first stop all video feed then start needed one
+        this.videoSocket.disconnect();
+        this.videoSocket.activateStream();
+    }
+
+    stopVideoFeed() {
+        this.videoSocket.disconnect();
+    }
+
+    setPosition(lat, lng, alt) {
+        // to set position on map and update it
+        this.posMark.setPosition({ lat: lat, lng: lng, alt: alt });
+        this.lat = lat;
+        this.lng = lng;
+        this.alt = alt;
+    }
+
+    addPoint(marker) {
+        // to add marker on map
+        var pointId = Drone.createPointID(marker);
+        var pointData = new PointData(marker, DEFAULT_SPEED, DEFAULT_ALTITUDE);
+        this.locationToPointDataMap.set(pointId, pointData);
+        return pointId;
+    }
+
+    static createPointID(marker) {
+        return marker.getPosition().lat() + "" + marker.getPosition().lng();
+    }
+
+    getPointDataJSON() {
+        var result = '[';
+        this.locationToPointDataMap.forEach(function (pointData) {
+            result += '{"lat":"' + pointData.marker.getPosition().lat() + '",' +
+                '"lng":"' + pointData.marker.getPosition().lng() + '",' +
+                '"speed":' + pointData.speed + ',' +
+                '"height":' + pointData.height + ',' +
+                '"action":' + pointData.action + '},';
+        });
+        return result.substring(0, result.length - 1) + ']';
+    }
+
+    getPointDataForID(key) {
+        return this.locationToPointDataMap.get(key);
+    }
+
+    removePoint(key) {
+        this.locationToPointDataMap.get(key).marker.setMap(null);
+        this.locationToPointDataMap.delete(key);
+    }
+
+    hidePoints() {
+        // will hide markers from view but they will still exist in memory
+        this.locationToPointDataMap.forEach(function (pointData) {
+            pointData.marker.setMap(null);
+        });
+    }
+
+    showPoints() {
+        this.locationToPointDataMap.forEach(function (pointData) {
+            pointData.marker.setMap(WORLD_MAP);
+        });
+    }
+
+    removePoints() {
+        this.hidePoints();
+        this.locationToPointDataMap = new Map();
+        this.labelCounter = 0;
+    }
+
+    getNextLabelIndex() { 
+        return ++this.labelCounter + "";
+    }
+}
+
+class PointData {
+    constructor(marker, speed, height) {
+        // marker is from the google api
+        this.marker = marker;
+        this.speed = speed;
+        this.height = height;
+        this.action = 0;
+    }
+}
