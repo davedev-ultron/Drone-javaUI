@@ -182,3 +182,37 @@ class PointData {
         this.action = 0;
     }
 }
+
+// when clicking on the map that will provide lat and long
+// that will be passed in here
+const addMarker = function (location) {
+    //if there is no drone selected nothing wil happen
+    if (SELECTED_DRONE == null || SELECTED_DRONE == undefined) {
+        return;
+    }
+
+    var marker = new google.maps.Marker({
+        position: location,
+        draggable: true,
+        label: SELECTED_DRONE.getNextLabelIndex(),
+        map: WORLD_MAP
+    });
+
+    var pointId = SELECTED_DRONE.addPoint(marker);
+
+    var contentString = renderMapPointDataComponent(pointId, DEFAULT_ALTITUDE, DEFAULT_SPEED);
+
+    var infowindow = new google.maps.InfoWindow({
+        // for the popup that shows up
+        content: contentString
+    });
+
+    marker.addListener('click', function (event) {
+        infowindow.open(WORLD_MAP, marker);
+    });
+
+    // when done dragging marker set new position
+    marker.addListener('dragend', function (event) {
+        marker.setPosition(event.latLng);
+    });
+}
