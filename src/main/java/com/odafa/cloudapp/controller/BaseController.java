@@ -24,9 +24,14 @@ public class BaseController {
 
 
     @GetMapping("/")
-    public String indexPage() {
-        
-        log.debug("Index Page Opened");
+    public String indexPage(Model model) {
+
+		// variables need to match front end
+		model.addAttribute("publicIp", getPublicIpAddress());
+		model.addAttribute("defaultSpeed", configurations.getDefaultSpeed());
+		model.addAttribute("defaultAltitude", configurations.getDefaultAltitude());
+		model.addAttribute("videoEndpoint", configurations.getVideoWsEndpoint());
+
         return "index";
     }
     
