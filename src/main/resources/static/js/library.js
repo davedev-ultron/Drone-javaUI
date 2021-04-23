@@ -389,6 +389,7 @@ const updatePointValue = function (form) {
     pointData.action = form["action"].value;
 }
 
+// for sharing video
 const copyToClipboard = function (elmId) {
     var copyLink = document.getElementById(elmId);
     copyLink.select();
