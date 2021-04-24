@@ -21,8 +21,8 @@ class VideoStreamClient {
 
         // when receiving message from backend
         this.webSocket.onmessage = function (event) {
-            // finding html element with drone id and adding attribute src, byte array data
-            $('#' + activeDroneId).attr("src", "data:image/jpg;base64," + event.data);
+            // finding html element with video + drone id and adding attribute src, byte array data
+            $('#video' + activeDroneId).attr("src", "data:image/jpg;base64," + event.data);
         }
     }
 

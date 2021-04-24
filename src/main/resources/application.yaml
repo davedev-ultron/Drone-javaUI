@@ -6,6 +6,7 @@ app:
   drone: 
     video-ws-endpoint: /videofeed # video websocket endpoint
     video-server-port: 1313 # port where were listening and receiving udp packages
+    control-server-port: 1314 # listening for connection in TCP from raspi
     drone-id-length: 1 # One byte size for the drone ID
     default-altitude: 4
     default-speed: 15
