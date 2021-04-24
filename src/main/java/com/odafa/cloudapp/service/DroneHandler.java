@@ -48,6 +48,7 @@ public class DroneHandler {
 			this.streamOut = droneSocket.getOutputStream();
 			// network managing entity, can extract data from network and map to objects and the other way when sending
 			// here we use to extract id
+			// Data mapper can help us extract data
 			droneId = DataMapper.extractDroneIdFromNetwork(droneSocket);
 		} catch (Exception e) {
 			close();
@@ -59,10 +60,20 @@ public class DroneHandler {
     }
 
     public void activate() {
-		
+		// receiveer thread
+		// lambda implements runnable interface
+		// the thread will be executing the code inside the lambda 
+		// will run in endless loop until socket is open
 		handlerExecutor.execute( () -> {
 			while (!droneSocket.isClosed()) {
 				try {
+					// extracts data from  the network (streamIn) and maps it
+					// to drone info (laststatus) object
+					// last update time we know when the last time we successfully received data
+					// this method will be blocking since its reading from network
+					// if there is no data the thread will block and wait until data received
+					// everytime it receives data it creates a new droneinfo object so garbage collector will have to
+					// clean this up, this can be optimized to reuse object instead
 					this.lastStatus = DataMapper.fromNetworkToDroneInfo(streamIn);
 					this.lastUpdateTime = System.currentTimeMillis();
 				} catch (Exception e) {
@@ -74,9 +85,13 @@ public class DroneHandler {
 			close();
 		});
 
+		// thread to send data also runs endlessly until socket is open
 		handlerExecutor.execute( () -> {
 			while (!droneSocket.isClosed()) {
 				try {
+					// extracts data from buffer, sends it to straeam, and we flush it
+					// flush forcefully will push data to stream
+					// also blocking until data is sent
 					streamOut.write( indoxMessageBuffer.take());
 					streamOut.flush();
 				} catch (SocketException se) {
@@ -87,9 +102,16 @@ public class DroneHandler {
 				}
 			}
 		});
+
+		// we have decoupled input output in differenct thread so we dont blocked
     }
 
+	// application thread adds data
+	// drone thread receives and sends
+	// application thread reads
+
     public void sendMissionData(List<DataPoint> dataPoints) {
+		// we rely on data mapper to translate to byte array and adds to buffer
 		final byte[] message = DataMapper.toNetworkMessage(dataPoints);
 		this.indoxMessageBuffer.add(message);
 
@@ -97,6 +119,8 @@ public class DroneHandler {
     }
 
     public void sendCommand(int commandCode) {
+		// we extract from the message command code
+		// we add it to the message buffer
 		final byte[] message = DataMapper.toNetworkMessage(commandCode);
 		this.indoxMessageBuffer.add(message);
 		
@@ -104,10 +128,15 @@ public class DroneHandler {
     }
 
     public DroneInfo getDroneLastStatus() {
+		// front end each second is polling
+		// so we need to make sure that this data is fresh and not stale
+		// if its been more than 10 seconds it will send blanks data and will close socket
 		if (isMaxWaitTimeExceeded()) {
+			
 			log.warn("Maximum Wait Time for Drone ID {} exceeded. Control socket closed", droneId);
 			close();
 		}
+		// from thread
 		return this.lastStatus;
     }
 

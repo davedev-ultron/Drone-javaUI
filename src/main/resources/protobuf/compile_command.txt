@@ -1,0 +1,29 @@
+
+proto to JAVA:
+./protoc.exe --java_out=. ProtoData.proto
+
+proto to Python:
+./protoc.exe --python_out=. ProtoData.proto
+
+
+
+For the issue with protobuf binary wheels:
+pip uninstall protobuf
+pip install --no-binary=protobuf protobuf
+
+ProtoData.prot is a protofile that degines the data structures that are
+being encoded. We are using proto3 syntax, can read more on google on others.
+
+The numbers are not values they are labels for each field for proto
+
+Mission data contains DataPoint so its a list or array of DataPoint
+(whatever is inside of MissionData)
+
+In order to use it we need to compile the libararies 2, in java and python
+
+./protoc.exe --java_out=. ProtoData.proto
+
+=. means we want to compile into the same directory, then specify the name of file
+
+we had to add the package to the top of the java file
+also need to add proto deppendencies in build.gradle
