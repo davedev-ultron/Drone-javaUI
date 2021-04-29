@@ -41,6 +41,7 @@ public class VideoStreamManager implements Runnable {
 		// create datagram socket to listen on certain port
 		try {
 			videoReceiverDatagramSocket = new DatagramSocket(configuration.getVideoServerPort());
+			log.info("Video Stream Manager Port: {}", configuration.getVideoServerPort());
 		} catch (IOException e) {
             log.error(e.getMessage(), e);
 			// blow up application if cannot open video feed

@@ -5,7 +5,7 @@ app:
   logging-to: console # options are: console / file
   drone: 
     video-ws-endpoint: /videofeed # video websocket endpoint
-    video-server-port: 1313 # port where were listening and receiving udp packages
+    video-server-port: 1315 # port where were listening and receiving udp packages
     control-server-port: 1314 # listening for connection in TCP from raspi
     drone-id-length: 1 # One byte size for the drone ID, this is number of symbols
     default-altitude: 4
