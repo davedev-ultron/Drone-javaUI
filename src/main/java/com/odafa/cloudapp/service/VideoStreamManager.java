@@ -81,6 +81,7 @@ public class VideoStreamManager implements Runnable {
 				// here we will actually receive data
 				// this is a blocking call and will block until we receive
 				videoReceiverDatagramSocket.receive(packet);
+				// log.debug("Packet Size: {}", packet.getLength());
 
 				// extract drone id and the rest is raw jpeg data
 				String droneId = new String( packet.getData(), 0, ID_LENGTH);
