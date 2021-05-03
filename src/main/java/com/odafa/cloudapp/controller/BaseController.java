@@ -63,6 +63,7 @@ public class BaseController {
 		} catch (Exception e) {
 			log.error(e.getMessage());
 		}
+		//return "174.82.102.83";
 		return "192.168.1.154";
 	}
 }

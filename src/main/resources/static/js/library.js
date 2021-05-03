@@ -220,35 +220,24 @@ const addMarker = function (location) {
 //control buttons
 const initializeDronesControls = function (id) {
     // use jquery to find button with id
-    $("input[id='mStart" + id + "']").click(function () {
-        SELECTED_DRONE.startMission();
-    });
-    $("input[id*='mCancel" + id + "']").click(function () {
-        SELECTED_DRONE.sendCommand(CommandType.CANCEL_MISSION);
-        SELECTED_DRONE.removePoints();
-    });
-    $("input[id*='mRTL" + id + "']").click(function () {
-        SELECTED_DRONE.sendCommand(CommandType.RETURN_TO_LAUNCH);
-    });
-    $("input[id*='fActivate" + id + "']").click(function () {
-        SELECTED_DRONE.sendCommand(CommandType.ACTIVATE_FUNCTION);
-    });
-    $("input[id*='fArm" + id + "']").click(function () {
-        SELECTED_DRONE.sendCommand(CommandType.ARM);
-    });
-    $("input[id*='fDisarm" + id + "']").click(function () {
-        SELECTED_DRONE.sendCommand(CommandType.DISARM);
-    });
     $("input[id*='fKill" + id + "']").click(function () {
         SELECTED_DRONE.sendCommand(CommandType.KILL);
     });
 
-    $("input[id*='cameraUP" + id + "']").click(function () {
-        SELECTED_DRONE.sendCommand(CommandType.CAMERA_UP);
+    $("input[id*='fActivate" + id + "']").click(function () {
+        SELECTED_DRONE.sendCommand(CommandType.ACTIVATE_FUNCTION);
     });
 
-    $("input[id*='cameraDOWN" + id + "']").click(function () {
-        SELECTED_DRONE.sendCommand(CommandType.CAMERA_DOWN);
+    $("input[id*='cameraLEFT" + id + "']").click(function () {
+        SELECTED_DRONE.sendCommand(CommandType.CAMERA_LEFT);
+    });
+
+    $("input[id*='cameraRIGHT" + id + "']").click(function () {
+        SELECTED_DRONE.sendCommand(CommandType.CAMERA_RIGHT);
+    });
+
+    $("input[id*='cameraMID" + id + "']").click(function () {
+        SELECTED_DRONE.sendCommand(CommandType.CAMERA_MID);
     });
 
     $("input[id*='btnF" + id + "']").click(function () {
@@ -264,75 +253,26 @@ const initializeDronesControls = function (id) {
     });
 
     $("input[id*='btnCncl" + id + "']").click(function () {
-        SELECTED_DRONE.sendCommand(CommandType.CANCEL_XMOVE);
+        SELECTED_DRONE.sendCommand(CommandType.STOP);
     });
 
     $("input[id*='btnB" + id + "']").click(function () {
         SELECTED_DRONE.sendCommand(CommandType.BACKWARD);
     });
-
-    $("input[id*='btnU" + id + "']").click(function () {
-        SELECTED_DRONE.sendCommand(CommandType.UP);
-    });
-
-    $("input[id*='btnStopZ" + id + "']").click(function () {
-        SELECTED_DRONE.sendCommand(CommandType.CANCEL_ZMOVE);
-    });
-
-    $("input[id*='btnD" + id + "']").click(function () {
-        SELECTED_DRONE.sendCommand(CommandType.DOWN);
-    });
-
-    $("input[id*='btnRL" + id + "']").click(function () {
-        SELECTED_DRONE.sendCommand(CommandType.RLEFT);
-    });
-
-    $("input[id*='btnRR" + id + "']").click(function () {
-        SELECTED_DRONE.sendCommand(CommandType.RRIGHT);
-    });
-
-    $("input[id*='btnRLEFT45" + id + "']").click(function () {
-        SELECTED_DRONE.sendCommand(CommandType.RLEFT45);
-    });
-
-    $("input[id*='btnRLEFT90" + id + "']").click(function () {
-        SELECTED_DRONE.sendCommand(CommandType.RLEFT90);
-    });
-
-    $("input[id*='btnRRIGHT45" + id + "']").click(function () {
-        SELECTED_DRONE.sendCommand(CommandType.RRIGHT45);
-    });
-
-    $("input[id*='btnRRIGHT90" + id + "']").click(function () {
-        SELECTED_DRONE.sendCommand(CommandType.RRIGHT90);
-    });
 }
 
 // command enum
 const CommandType = {
-    START_MISSION: 14,
-    CANCEL_MISSION: 6,
-    FORWARD: 11,
-    MLEFT: 15,
-    MRIGHT: 16,
-    CANCEL_XMOVE: 12,
-    CANCEL_ZMOVE: 13,
-    UP: 1,
-    RLEFT: 2,
-    RRIGHT: 3,
-    BACKWARD: 4,
-    DOWN: 5,
-    RETURN_TO_LAUNCH: 7,
-    ACTIVATE_FUNCTION: 8,
-    ARM: 9,
-    KILL: 17,
-    CAMERA_UP: 22,
-    CAMERA_DOWN: 23,
-    DISARM: 10,
-    RLEFT45: 18,
-    RLEFT90: 19,
-    RRIGHT45: 20,
-    RRIGHT90: 21,
+    FORWARD: 1,
+    BACKWARD: 2,
+    MLEFT: 3,
+    MRIGHT: 4,
+    STOP: 5,
+    KILL: 5,
+    CAMERA_LEFT: 10,
+    CAMERA_MID: 11,
+    CAMERA_RIGHT: 12,
+    ACTIVATE_FUNCTION: 13,
 }
 
 // keyboard control
@@ -345,34 +285,26 @@ const executeKeyboardCommand = function (event) {
             SELECTED_DRONE.sendCommand(CommandType.BACKWARD);
             break;
         case 'a':
-            SELECTED_DRONE.sendCommand(CommandType.RLEFT);
-            break;
-        case 'd':
-            SELECTED_DRONE.sendCommand(CommandType.RRIGHT);
-            break;
-
-        case '4':
             SELECTED_DRONE.sendCommand(CommandType.MLEFT);
             break;
-        case '6':
+        case 'd':
             SELECTED_DRONE.sendCommand(CommandType.MRIGHT);
             break;
-        case '8':
-            SELECTED_DRONE.sendCommand(CommandType.UP);
-            break;
-        case '2':
-            SELECTED_DRONE.sendCommand(CommandType.DOWN);
-            break;
-        case '5':
-            SELECTED_DRONE.sendCommand(CommandType.CANCEL_XMOVE);
-            SELECTED_DRONE.sendCommand(CommandType.CANCEL_ZMOVE);
+        case ' ':
+            SELECTED_DRONE.sendCommand(CommandType.STOP)
             break;
 
         case 'r':
-            SELECTED_DRONE.sendCommand(CommandType.CAMERA_UP);
+            SELECTED_DRONE.sendCommand(CommandType.CAMERA_LEFT);
             break;
         case 'f':
-            SELECTED_DRONE.sendCommand(CommandType.CAMERA_DOWN);
+            SELECTED_DRONE.sendCommand(CommandType.CAMERA_MID);
+            break;
+        case 'v':
+            SELECTED_DRONE.sendCommand(CommandType.CAMERA_RIGHT);
+            break;
+        case 'c':
+            SELECTED_DRONE.sendCommand(CommandType.ACTIVATE_FUNCTION);
             break;
     }
 }
@@ -387,13 +319,4 @@ const updatePointValue = function (form) {
     pointData.speed = form["speed"].value;
     pointData.height = form["height"].value;
     pointData.action = form["action"].value;
-}
-
-// for sharing video
-const copyToClipboard = function (elmId) {
-    var copyLink = document.getElementById(elmId);
-    copyLink.select();
-    copyLink.setSelectionRange(0, 99999);
-
-    document.execCommand("copy");
 }

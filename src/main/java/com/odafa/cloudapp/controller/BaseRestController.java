@@ -33,10 +33,10 @@ public class BaseRestController {
         //final List<DroneInfo> drones = new ArrayList<>();
 
 		// mock data
-		DroneInfo dto1 = new DroneInfo("3", -35.361768, 149.1669463, 0.0468, 7.1, 12.3, "ONLINE");
-		DroneInfo dto2 = new DroneInfo("4", -35.363168, 149.1682463, 0.0468, 3, 21, "ON MISSION");
-		drones.add(dto1);
-		drones.add(dto2);
+		// DroneInfo dto1 = new DroneInfo("3", -35.361768, 149.1669463, 0.0468, 7.1, 12.3, "ONLINE");
+		// DroneInfo dto2 = new DroneInfo("4", -35.363168, 149.1682463, 0.0468, 3, 21, "ON MISSION");
+		// drones.add(dto1);
+		// drones.add(dto2);
 
 		// google library to return json
 		// in actual practice this should be done not in the controller
