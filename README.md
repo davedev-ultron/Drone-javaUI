@@ -1,4 +1,5 @@
-# HYDRA
+# Drone - Java UI
+This repo is for the java UI that allows control of the drone via the internet. I hosted it on AWS.
 
 Part-18 to get it running and demoable
 
